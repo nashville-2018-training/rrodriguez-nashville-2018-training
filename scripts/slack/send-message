@@ -1,0 +1,35 @@
+#!/bin/bash
+
+# Exit immediately on errors
+set -e
+
+# Get the commit message from the current commit’s author
+COMMIT_AUTHOR=$(git log -1 --format='%ae' "${CIRCLE_SHA1^1}")
+
+COMMIT_MESSAGE=$(git log -1 --pretty=%B \
+--author="${CIRCLE_AUTHOR}")
+
+# Get the site UUID from the site name
+TERMINUS_SITE_UUID=$(terminus site:info ${TERMINUS_SITE} --field=id)
+
+# Define the Slack username
+SLACK_USERNAME="CircleCI Bot"
+
+# Define the Slack icon URL
+SLACK_ICON_URL="https://circleci.com/circleci-logo-stacked-fb.png"
+
+# Use the multidev environment unless on master, then use dev
+if [[ $CIRCLE_BRANCH != "master" ]]
+then
+  SLACK_ENV=$TERMINUS_ENV
+else
+  SLACK_ENV="dev"
+fi
+
+# Define the Slack message
+SLACK_MESSAGE="The commit \`${COMMIT_MESSAGE}\` by \`${CIRCLE_USERNAME}\` on branch \`${CIRCLE_BRANCH}\` has been deployed to Pantheon on <https://dashboard.pantheon.io/sites/${TERMINUS_SITE_UUID}#${SLACK_ENV}/code|the ${SLACK_ENV} environment>!"
+
+# Send the message to Slack
+echo -e "\nSending a message to the ${SLACK_CHANNEL} Slack channel..."
+
+curl -X POST --data "payload={\"channel\": \"${SLACK_CHANNEL}\", \"icon_url\": \"${SLACK_ICON_URL}\", \"username\": \"${SLACK_USERNAME}\", \"text\": \"${SLACK_MESSAGE}\"}" $SLACK_HOOK_URL
