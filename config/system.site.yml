@@ -1,0 +1,14 @@
+uuid: 57263a6a-2434-464e-8241-ad3b0deec436
+name: rrodriguez-nashville-2018-training
+mail: raulrodrigueznyc@gmail.com
+slogan: ''
+page:
+  403: ''
+  404: ''
+  front: /node
+admin_compact_mode: false
+weight_select_max: 100
+langcode: en
+default_langcode: en
+_core:
+  default_config_hash: yXadRE77Va-G6dxhd2kPYapAvbnSvTF6hO4oXiOEynI
